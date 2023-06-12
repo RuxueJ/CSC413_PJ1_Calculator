@@ -10,19 +10,19 @@ public class Evaluator {
   private Stack<Operand> operandStack;
   private Stack<Operator> operatorStack;
   private StringTokenizer expressionTokenizer;
-  private final String delimiters = " +/*-^";
+  private final String delimiters = " +/*-^()";
 
   public Evaluator() {
     operandStack = new Stack<>();
     operatorStack = new Stack<>();
   }
 
-  public int evaluateExpression(String expression ) throws InvalidTokenException {
+  public int evaluateExpression(String expression) throws InvalidTokenException {
     String expressionToken;
 
     // The 3rd argument is true to indicate that the delimiters should be used
     // as tokens, too. But, we'll need to remember to filter out spaces.
-    this.expressionTokenizer = new StringTokenizer( expression, this.delimiters, true );
+    this.expressionTokenizer = new StringTokenizer(expression, this.delimiters, true);
 
     // initialize operator stack - necessary with operator priority schema
     // the priority of any operator in the operator stack other than
@@ -30,39 +30,41 @@ public class Evaluator {
     // of the usual operators
 
 
-
-    while ( this.expressionTokenizer.hasMoreTokens() ) {
+    while (this.expressionTokenizer.hasMoreTokens()) {
       // filter out spaces
-      if ( !( expressionToken = this.expressionTokenizer.nextToken() ).equals( " " )) {
+      if (!(expressionToken = this.expressionTokenizer.nextToken()).equals(" ")) {
         // check if token is an operand
-        if ( Operand.check( expressionToken )) {
-          operandStack.push( new Operand( expressionToken ));
-        } else {
-          if ( ! Operator.check( expressionToken )) {
-            throw new InvalidTokenException(expressionToken);
-          }
-
-
-          // TODO Operator is abstract - these two lines will need to be fixed:
-          // The Operator class should contain an instance of a HashMap,
-          // and values will be instances of the Operators.  See Operator class
-          // skeleton for an example.
-          Operator newOperator = new Operator();
-        
-          while (operatorStack.peek().priority() >= newOperator.priority() ) {
-            // note that when we eval the expression 1 - 2 we will
-            // push the 1 then the 2 and then do the subtraction operation
-            // This means that the first number to be popped is the
-            // second operand, not the first operand - see the following code
-            Operator operatorFromStack = operatorStack.pop();
-            Operand operandTwo = operandStack.pop();
-            Operand operandOne = operandStack.pop();
-            Operand result = operatorFromStack.execute( operandOne, operandTwo );
-            operandStack.push( result );
-          }
-
-          operatorStack.push( newOperator );
+        if (Operand.check(expressionToken)) {
+          operandStack.push(new Operand(expressionToken));
+          continue;
         }
+
+        // check if token is an operator
+        if (Operator.check(expressionToken)) {
+
+          // create a newOperator according to the token
+          Operator newOperator = Operator.getOperator(expressionToken);
+
+          if (operatorStack.isEmpty() || newOperator.priority() > operatorStack.peek().priority()) {
+            operatorStack.push(newOperator);
+            continue;
+          }
+          if (expressionToken.equals("(")){
+            operatorStack.push(newOperator);
+            continue;
+          }
+          if(expressionToken.equals(")")){
+            while(!(operatorStack.peek() instanceof LeftParenthesisOperator)) {
+              processOperator();
+            }
+            operatorStack.pop();
+          }
+        }
+
+        // TODO Operator is abstract - these two lines will need to be fixed:
+        // The Operator class should contain an instance of a HashMap,
+        // and values will be instances of the Operators.  See Operator class
+        // skeleton for an example.
       }
     }
 
@@ -75,7 +77,18 @@ public class Evaluator {
     // In order to complete the evaluation we must empty the stacks,
     // that is, we should keep evaluating the operator stack until it is empty;
     // Suggestion: create a method that processes the operator stack until empty.
+    while (!operatorStack.isEmpty()) {
+      processOperator();
+    }
 
-    return 0;
+    return operandStack.peek().getValue();
+  }
+
+  private void processOperator () {
+    Operator operatorFromStack = operatorStack.pop();
+    Operand operandTwo = operandStack.pop();
+    Operand operandOne = operandStack.pop();
+    Operand result = operatorFromStack.execute(operandOne, operandTwo);
+    operandStack.push(result);
   }
 }
