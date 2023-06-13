@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EmptyStackException;
 
 public class EvaluatorUI extends JFrame implements ActionListener {
 
@@ -27,7 +28,7 @@ public class EvaluatorUI extends JFrame implements ActionListener {
      */
     private JButton[] buttons = new JButton[buttonText.length];
 
-    public static void main(String argv[]) {
+    public static void main(String[] argv) {
         new EvaluatorUI();
     }
 
@@ -75,7 +76,28 @@ public class EvaluatorUI extends JFrame implements ActionListener {
      *                    button is pressed.
      */
     public void actionPerformed(ActionEvent actionEventObject) {
-
+        String commandClick = actionEventObject.getActionCommand();
+        System.out.println(commandClick);
+        if(commandClick.equals("C")){
+            this.expressionTextField.setText("");
+        } else if (commandClick.equals("CE")) {
+            while(this.expressionTextField.getText().substring(this.expressionTextField.getText().length()-1).matches("\\d")){
+                this.expressionTextField.setText(this.expressionTextField.getText().substring(0,this.expressionTextField.getText().length()-1));
+            }
+        } else if (commandClick.equals("=")) {
+            String testExpression = this.expressionTextField.getText();
+            Evaluator ev = new Evaluator();
+            try {
+                int result = ev.evaluateExpression(testExpression);
+                this.expressionTextField.setText(""+result);
+            }catch (InvalidTokenException e){
+                this.expressionTextField.setText("Invalid Token");
+            }catch (EmptyStackException e){
+                this.expressionTextField.setText("Invalid Token");
+            }
+        }else {
+            this.expressionTextField.setText(this.expressionTextField.getText() + commandClick);
+        }
 
     }
 }
