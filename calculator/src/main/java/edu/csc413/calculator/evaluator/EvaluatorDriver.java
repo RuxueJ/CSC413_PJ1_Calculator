@@ -38,7 +38,7 @@ public class EvaluatorDriver {
         EvaluatorDriver.testExpressions.put("(6-12*2)/3", "-6");
         EvaluatorDriver.testExpressions.put("3^2", "9");
         EvaluatorDriver.testExpressions.put("3^2/2", "4");
-        EvaluatorDriver.testExpressions.put("3^2/2 +(4+5)", "13");
+        EvaluatorDriver.testExpressions.put("3^2/2+(4+5)", "13");
         EvaluatorDriver.testExpressions.put("3^2 + (2^4) +(4+5)", "34");
         EvaluatorDriver.testExpressions.put("3+2-9+8*2 + (3+9-8/2)", "20");
         EvaluatorDriver.testExpressions.put("2+3-5*((2-3)*2-5*2+3*(2-3-5-5*6)+4/2)*2-9", "1176");
