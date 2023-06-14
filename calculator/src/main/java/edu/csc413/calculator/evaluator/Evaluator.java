@@ -81,14 +81,10 @@ public class Evaluator {
     // In order to complete the evaluation we must empty the stacks,
     // that is, we should keep evaluating the operator stack until it is empty;
     // Suggestion: create a method that processes the operator stack until empty.
-
     while (!operatorStack.isEmpty()) {
       processOperator();
     }
-
     return operandStack.peek().getValue();
-
-
   }
 
 
