@@ -1,10 +1,6 @@
 # CSC 413 - Project One
 
-## Student Name  : Ruxue Jin
 
-## Student ID    : 923092817
-
-## Student Email : rjin@sfsu.edu
 
 ### Note failure to completely fill out this README.md could cause you to recieve a  0 for your project until correctly done
 
